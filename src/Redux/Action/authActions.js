@@ -13,7 +13,11 @@ export const Login = (username, password) => {
         Axios.get(`${API_URL}/users?username=${username}&password=${password}`)
         .then(res => {
             if(res.data[0]){
-                localStorage.setItem('token', JSON.stringify({username, password}))
+                localStorage.setItem('token', JSON.stringify({
+                    username: res.data[0].username, 
+                    password: res.data[0].password,
+                    id: res.data[0].id
+                }))
                 dispatch({
                     type: 'LOGIN',
                     payload : res.data[0]

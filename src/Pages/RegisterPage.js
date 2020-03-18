@@ -56,7 +56,9 @@ class LoginPage extends Component {
         }
         
         return ( 
-            <div className='d-flex justify-content-center' style={{height : '100vh', alignItems : 'center'}}>
+            <React.Fragment>
+            <h1 style={{'textAlign' : 'center', 'margin' : '0'}}>Register</h1>
+            <div className='d-flex justify-content-center' style={{height : '70vh', alignItems : 'center'}}>
                 <Form style={{width : '400px', height: '400px'}}>
                     <FormGroup>
                       <Label for="exampleUsername">Username</Label>
@@ -86,6 +88,7 @@ class LoginPage extends Component {
                     </div>
                 </Form>
             </div>
+            </React.Fragment>
         );
     }
 }

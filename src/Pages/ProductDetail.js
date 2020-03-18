@@ -4,7 +4,10 @@ import Select from 'react-select'
 import { connect } from 'react-redux'
 import { fetchProductId } from '../Redux/Action'
 import Loader from 'react-loader-spinner'
-
+import Axios from 'axios'
+import { API_URL } from '../Support/API_URL'
+import Swal from 'sweetalert2'
+import { Redirect } from 'react-router-dom' 
 class ProductDetail extends Component {
     state = {
         options: [
@@ -17,7 +20,9 @@ class ProductDetail extends Component {
             { value: '44', label: '44' },
             { value: '45', label: '45' },
             { value: '46', label: '46' },
-        ]
+        ],
+        selectedOption: null,
+        confirmLogin: true
     }
     
     componentDidMount(){
@@ -25,13 +30,70 @@ class ProductDetail extends Component {
         // let id = this.props.location.search
         // ini props emang udah bawaan react
         // console.log(this.props)
-
         let id = this.props.location.search.split("=")[1]
         this.props.fetchProductId(id)
     }
 
+    handleChange = (selectedOption) => {
+        this.setState({ selectedOption: Number(selectedOption.value)});
+        console.log(this.state.selectedOption)
+    }
+
+    addToCart = () => {
+        if(!this.props.isLogged){
+            this.setState({
+                confirmLogin : false
+            })
+        }else{
+            const {image, name, brand, category, price, id} = this.props.data
+            let obj = {
+                userId: this.props.userId,
+                idProduct: id,
+                name,
+                brand,
+                category,
+                price,
+                image,
+                size: this.state.selectedOption,
+                count: 1
+            }
+            Swal.fire({
+                icon: 'success',
+                title: 'Added To Cart',
+                text: `${obj.name} - size: ${obj.size}`,   
+            })
+            Axios.get(`${API_URL}/cart?userId=${obj.userId}&idProduct=${obj.idProduct}&size=${obj.size}`)
+            .then(res => {
+                if(res.data.length > 0){
+                    Axios.patch(`${API_URL}/cart/${res.data[0].id}`, {count: res.data[0].count + 1})
+                    .then(res => {
+                        console.log(res.data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }else{
+                    Axios.post(`${API_URL}/cart`, obj)
+                    .then(res => {
+                        console.log(res.data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                }
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
+    }
+
     render() {
-        if(this.props.loading){
+        if(!this.state.confirmLogin){
+            return(
+                <Redirect to='/login'/>
+            )
+        }else if(this.props.loading){
             return (
                 <div className='d-flex justify-content-center'>
                     <Loader type="ThreeDots" color="#somecolor" height={80} width={80} />
@@ -67,13 +129,16 @@ class ProductDetail extends Component {
                         Pork chop pig ball tip pastrami pork belly venison shoulder fatback landjaeger ribeye filet mignon leberkas bacon cow t-bone. Short ribs pastrami andouille spare ribs. Cow ham corned beef pork loin chuck pig. Turkey capicola burgdoggen pork chop pork loin jerky picanha pork belly pastrami.
                         </p>
                         <div>
-                            <strong>Price: Rp. {price ? price.toLocaleString() : null}</strong>
+                            <strong>Price: Rp. {price && price.toLocaleString()}</strong>
                         </div>
                         <div style={{width:'40%', marginTop: '20px', marginBottom: '10px'}}>
-                            <Select options={this.state.options}></Select>
+                            <Select 
+                                options={this.state.options} 
+                                onChange={this.handleChange}
+                            />
                         </div>
                         <div className='d-flex flex-row-reverse'>
-                            <Button>Add To Cart</Button>
+                            <Button onClick={this.addToCart}>Add To Cart</Button>
                         </div>
                     </div>
                 </div>
@@ -86,7 +151,9 @@ const mapStateToProps = (state) => {
     return{
         data : state.product.productId,
         loading : state.product.loading,
-        error: state.product.error
+        error: state.product.error,
+        userId: state.auth.id,
+        isLogged: state.auth.logged
     }
 }
 

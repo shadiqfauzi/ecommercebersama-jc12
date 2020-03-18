@@ -9,16 +9,6 @@ class ProductPage extends Component {
     state = {  }
     
     componentDidMount(){
-        // axios.get(`${API_URL}/products`)
-        // .then((res) => {
-        //     this.setState({
-        //         data: res.data
-        //     })
-        // })
-        // .catch((err) => {
-        //     console.log(err)
-        // })
-        
         this.props.fetchProduct()
     }
 
@@ -62,13 +52,7 @@ class ProductPage extends Component {
                     </div>
                     <div className='col-10'>
                         <div className='row'>
-                            {
-                                this.props.data
-                                ?
-                                this.arrProductMap()
-                                :
-                                null
-                            }
+                            {this.arrProductMap()}
                         </div>
                     </div>
                 </div>

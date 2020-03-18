@@ -6,6 +6,7 @@ import {
   NavbarToggler,
   NavbarBrand,
   Nav,
+  NavbarText,
   NavItem,
   NavLink,
   UncontrolledDropdown,
@@ -14,7 +15,7 @@ import {
   DropdownItem
 } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faShoppingCart} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -27,10 +28,11 @@ const Example = (props) => {
 
   const isLoggedIn = useSelector(state => state.auth.logged)
   const username = useSelector(state => state.auth.username)
+  const role = useSelector(state => state.auth.role)
 
   const logOut = () => {
     dispatch(Logout())
-    localStorage.removeItem('username')
+    localStorage.removeItem('token')
   }
 
   return (
@@ -41,7 +43,7 @@ const Example = (props) => {
         <Collapse isOpen={isOpen} navbar>
           <Nav className="mr-auto" navbar>
             <NavItem>
-              <NavLink>Men</NavLink>
+              <NavLink tag={Link} to={'/product'}>Men</NavLink>
             </NavItem>
             <NavItem>
               <NavLink>Women</NavLink>
@@ -79,6 +81,17 @@ const Example = (props) => {
                   </div>
                   :
                   <div>
+                    {
+                      role === 'admin' 
+                      ?
+                      <Link to='/manage-product'>
+                        <DropdownItem>
+                          Manage Product
+                        </DropdownItem>
+                      </Link>
+                      :
+                      null
+                    }
                     <Link to='/cart'>
                       <DropdownItem>
                         Cart
@@ -87,11 +100,6 @@ const Example = (props) => {
                     <Link to='/product'>
                       <DropdownItem>
                         Product
-                      </DropdownItem>
-                    </Link>
-                    <Link to='/manage-product'>
-                      <DropdownItem>
-                        Manage Product
                       </DropdownItem>
                     </Link>
                     <Link to='/transaction'>
@@ -104,11 +112,19 @@ const Example = (props) => {
                         Logout
                       </DropdownItem>
                     </Link>
+                  
                   </div>
                 }
               </DropdownMenu>
             </UncontrolledDropdown>
           </Nav>
+            {
+              isLoggedIn
+              &&
+              <NavbarText>
+              <Link to='/cart'><FontAwesomeIcon icon={faShoppingCart}/></Link>
+              </NavbarText>
+            }
         </Collapse>
       </Navbar>
     </div>

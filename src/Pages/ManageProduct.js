@@ -184,7 +184,7 @@ class ManageProduct extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.props.data && this.renderTable()}
+                        {this.renderTable()}
                     </tbody>
                     <tfoot>
                         <tr>

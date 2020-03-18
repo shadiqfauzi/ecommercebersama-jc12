@@ -48,6 +48,20 @@
       "password": "asd123",
       "role": "user",
       "id": 7
+    },
+    {
+      "username": "ayyasy",
+      "email": "ayyasy@gmail.com",
+      "password": "123",
+      "role": "user",
+      "id": 8
+    },
+    {
+      "username": "",
+      "email": "",
+      "password": "",
+      "role": "user",
+      "id": 9
     }
   ],
   "products": [
@@ -110,7 +124,7 @@
     {
       "name": "Ultra Boost DNA Chinese New Year Black ",
       "brand": "Adidas",
-      "price": 6000000,
+      "price": 8000000,
       "category": "Men",
       "image": "https://d38t85204sb0x0.cloudfront.net/eyJidWNrZXQiOiJraWNrYXZlbnVlLWFzc2V0cyIsImtleSI6InByb2R1Y3RzLzYzODQvNGU5OGU4MzMtMjA0YS00ZTEzLThiOTItNTI4ZjM2NTA3ODI0LnBuZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJ3aWR0aCI6NTAwfX19",
       "id": 9
@@ -146,5 +160,7 @@
     {
       "id": 11
     }
-  ]
+  ],
+  "cart": [],
+  "transaction": []
 }

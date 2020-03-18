@@ -7,13 +7,21 @@ import { Login } from '../Redux/Action'
 // import { API_URL } from '../Support/API_URL'
 
 class LoginPage extends Component {
-    state = {  }
+    state = {
+        logged: false
+    }
 
-    onBtnLogin = () => {
+    onBtnLogin = (event) => {
+        event.preventDefault()
         let username = this.username.value
         let password = this.password.value
         
         this.props.Login(username, password)
+        if(this.props.logged){
+            this.setState({
+                logged: true
+            })
+        }
 
         // axios.get(`${API_URL}/users?username=${username}&password=${password}`)
         // .then((res) => {
@@ -46,9 +54,11 @@ class LoginPage extends Component {
             )
         }
 
-        return ( 
-            <div className='d-flex justify-content-center' style={{height : '100vh', alignItems : 'center'}}>
-                <Form style={{width : '400px', height: '400px'}}>
+        return (
+            <React.Fragment>
+                <h1 style={{'textAlign' : 'center'}}>Login</h1>
+            <div className='d-flex justify-content-center' style={{height : '70vh', alignItems : 'center'}}>
+                <Form onSubmit={this.onBtnLogin} style={{width : '400px', height: '400px'}}>
                     <FormGroup>
                         <Label for="exampleEmail">Username</Label>
                         <Input type="text" name="email" id="exampleEmail" placeholder="Username" innerRef={(username) => this.username = username} />
@@ -58,7 +68,7 @@ class LoginPage extends Component {
                         <Input type="password" name="password" id="examplePassword" placeholder="Password" innerRef={(password) => this.password = password}/>
                     </FormGroup>
                     <div style={{display: 'flex', justifyContent: 'space-around'}}>
-                        <Button onClick={this.onBtnLogin}>
+                        <Button type='submit' onClick={this.onBtnLogin}>
                             Login
                         </Button>
                         <Link to='/register'>
@@ -69,6 +79,7 @@ class LoginPage extends Component {
                     </div>
                 </Form>
             </div>
+            </React.Fragment>
         );
     }
 }
