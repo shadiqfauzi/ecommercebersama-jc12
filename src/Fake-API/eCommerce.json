@@ -162,5 +162,26 @@
     }
   ],
   "cart": [],
-  "transaction": []
+  "transaction": [
+    {
+      "userId": 1,
+      "grandTotal": 12850000,
+      "date": "21/2/2020, 10:54:15",
+      "product": [
+        {
+          "userId": 1,
+          "idProduct": 7,
+          "name": "1 Retro High Off-White University Blue",
+          "brand": "Jordan",
+          "category": "Men",
+          "price": 12850000,
+          "image": "https://d38t85204sb0x0.cloudfront.net/eyJidWNrZXQiOiJraWNrYXZlbnVlLWFzc2V0cyIsImtleSI6InByb2R1Y3RzLzEzMTEvNmNjMmRlZWEtNTU2NC00MTJjLWI2YjYtMWM5ZDk0ZTM5YWJlLmpwZWciLCJlZGl0cyI6eyJyZXNpemUiOnsid2lkdGgiOjQwMH19fQ==",
+          "size": 39,
+          "count": 1,
+          "id": 1
+        }
+      ],
+      "id": 1
+    }
+  ]
 }
