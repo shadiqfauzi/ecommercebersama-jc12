@@ -66,7 +66,7 @@ class LoginPage extends Component {
                     </FormGroup>
                     <FormGroup>
                       <Label for="exampleEmail">Email</Label>
-                      <Input type="text" name="email" id="exampleEmail" placeholder="Email" innerRef={(email) => this.email = email}/>
+                      <Input type="email" name="email" id="exampleEmail" placeholder="Email" innerRef={(email) => this.email = email}/>
                     </FormGroup>
                     <FormGroup>
                       <Label for="examplePassword">Password</Label>

@@ -45,46 +45,54 @@ class ProductDetail extends Component {
                 confirmLogin : false
             })
         }else{
-            const {image, name, brand, category, price, id} = this.props.data
-            let obj = {
-                userId: this.props.userId,
-                idProduct: id,
-                name,
-                brand,
-                category,
-                price,
-                image,
-                size: this.state.selectedOption,
-                count: 1
-            }
-            Swal.fire({
-                icon: 'success',
-                title: 'Added To Cart',
-                text: `${obj.name} - size: ${obj.size}`,   
-            })
-            Axios.get(`${API_URL}/cart?userId=${obj.userId}&idProduct=${obj.idProduct}&size=${obj.size}`)
-            .then(res => {
-                if(res.data.length > 0){
-                    Axios.patch(`${API_URL}/cart/${res.data[0].id}`, {count: res.data[0].count + 1})
-                    .then(res => {
-                        console.log(res.data)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                }else{
-                    Axios.post(`${API_URL}/cart`, obj)
-                    .then(res => {
-                        console.log(res.data)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
+            if(this.state.selectedOption){
+                const {image, name, brand, category, price, id} = this.props.data
+                let obj = {
+                    userId: this.props.userId,
+                    idProduct: id,
+                    name,
+                    brand,
+                    category,
+                    price,
+                    image,
+                    size: this.state.selectedOption,
+                    count: 1
                 }
-            })
-            .catch(err => {
-                console.log(err)
-            })
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added To Cart',
+                    text: `${obj.name} - size: ${obj.size}`,   
+                })
+                Axios.get(`${API_URL}/cart?userId=${obj.userId}&idProduct=${obj.idProduct}&size=${obj.size}`)
+                .then(res => {
+                    if(res.data.length > 0){
+                        Axios.patch(`${API_URL}/cart/${res.data[0].id}`, {count: res.data[0].count + 1})
+                        .then(res => {
+                            console.log(res.data)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    }else{
+                        Axios.post(`${API_URL}/cart`, obj)
+                        .then(res => {
+                            console.log(res.data)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+            }else{
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Size has not been selected',
+                    text: 'Please select size before adding to cart.'
+                })
+            }
         }
     }
 
