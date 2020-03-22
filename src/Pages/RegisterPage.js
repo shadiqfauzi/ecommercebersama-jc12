@@ -30,7 +30,6 @@ class LoginPage extends Component {
                     .then((res) => {
                         console.log(res.data)
                         let { username, email, role, id } = res.data
-
                         this.props.Login({
                             username,
                             email,
