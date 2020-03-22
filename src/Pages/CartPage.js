@@ -148,7 +148,13 @@ class Cart extends React.Component {
                 Axios.get(`${API_URL}/cart?userId=${this.props.userId}`)
                 .then(res => {
                     let newDate = new Date()
-                    var longDate = `${newDate.getDate()}/${newDate.getMonth()}/${newDate.getFullYear()}, ${newDate.getHours()}:${newDate.getMinutes()}:${newDate.getSeconds()}`
+                    let date = newDate.getDate()
+                    let month = newDate.getMonth() + 1
+                    let year = newDate.getFullYear()
+                    let hour = newDate.getHours() < 10 ? `0${newDate.getHours()}` : newDate.getHours()
+                    let minute = newDate.getMinutes() < 10 ? `0${newDate.getMinutes()}` : newDate.getMinutes()
+                    let second = newDate.getSeconds() < 10 ? `0${newDate.getSeconds()}` : newDate.getSeconds()
+                    var longDate = `${date}/${month}/${year}, ${hour}:${minute}:${second}`
                     let obj = {
                         userId: this.props.userId,
                         grandTotal: this.state.grandTotal,
