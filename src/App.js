@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Home from './Pages/Home';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
 import LoginPage from './Pages/LoginPage';
@@ -51,9 +51,8 @@ class App extends Component{
   }
 
   render(){
-    return(
-      <div>
-        <Header />
+    let routes = (
+      <Switch>
         <Route path='/' component={Home} exact/>
         <Route path='/login' component={LoginPage} />
         <Route path='/register' component={RegisterPage} />
@@ -65,6 +64,12 @@ class App extends Component{
         <Route path='/reviewv2' component={Review} />
         <Route path='/product-detail' component={ProductDetail} />
         <Route path='/manage-product' component={ManageProduct} />
+      </Switch>
+    )
+    return(
+      <div>
+        <Header />
+          {routes}
         <Footer/>
       </div>
     )
