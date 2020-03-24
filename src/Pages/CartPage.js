@@ -5,19 +5,17 @@ import { API_URL } from '../Support/API_URL'
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
 import { Redirect } from 'react-router-dom';
+import Loader from 'react-loader-spinner'
 
 class Cart extends React.Component {
     state = { 
         data: [],
         grandTotal: 0,
-        finishCart: false
+        finishCart: false,
+        loading: true
     }
 
     componentDidMount(){
-        this.setState({
-            grandTotal: 0,
-            finishCart: false
-        })
         let token = localStorage.getItem('token')
         let userId = JSON.parse(token)
         this.fetchData(userId.id)
@@ -25,7 +23,6 @@ class Cart extends React.Component {
 
     componentWillUnmount() {
         this.setState({
-            data: [],
             grandTotal: 0
         })
     }
@@ -34,9 +31,9 @@ class Cart extends React.Component {
         let userId = this.props.userId
         Axios.get(`${API_URL}/cart?userId=${userId}&id=${id}`)
         .then(res => {
-            Axios.patch(`${API_URL}/cart/${id}`, {count: res.data[0].count + num})
+            Axios.patch(`${API_URL}/cart/${id}`, {quantity: res.data[0].quantity + num})
             .then(res => {
-                if(res.data.count === 0){
+                if(res.data.quantity === 0){
                     this.deleteCart(id, image, name, num)
                 }
                 this.componentDidMount()
@@ -55,6 +52,7 @@ class Cart extends React.Component {
             .then(res => {
                 this.setState({
                     data: res.data,
+                    loading: false
                 })
                 this.countGrandTotal()
             })
@@ -75,10 +73,10 @@ class Cart extends React.Component {
                     <td>{val.size}</td>
                     <td>
                         <Button onClick={() => this.handleBtnClick(val.id, -1, val.image, val.name)} color='primary'>-</Button>
-                        {val.count}
+                        {val.quantity}
                         <Button onClick={() => this.handleBtnClick(val.id, 1, val.image, val.name)} color='primary'>+</Button>
                     </td>
-                    <td>Rp. {(val.price*val.count).toLocaleString('id-ID')}</td>
+                    <td>Rp. {(val.price*val.quantity).toLocaleString('id-ID')}</td>
                     <td><Button color='danger' onClick={() => this.deleteCart(val.id, val.image, val.name)}>Delete</Button></td>
                 </tr>
             )
@@ -90,19 +88,11 @@ class Cart extends React.Component {
             grandTotal: 0
         })
         this.state.data.forEach(val => {
-            if(val.count > 1){
-                this.setState(prevState => {
-                    return{
-                        grandTotal : prevState.grandTotal + (val.price * val.count)
-                    }
-                })
-            }else{
-                this.setState(prevState => {
-                    return{
-                        grandTotal : prevState.grandTotal + val.price
-                    }
-                })
-            }
+            this.setState(prevState => {
+                return{
+                    grandTotal : prevState.grandTotal + (val.price * val.quantity)
+                }
+            })
         })
     }
 
@@ -163,22 +153,21 @@ class Cart extends React.Component {
                     }
                     Axios.post(`${API_URL}/transaction`, obj)
                     .then(res => {
-                        console.log(res)
+                        res.data.product.forEach(val => {
+                            Axios.delete(`${API_URL}/cart/${val.id}`)
+                            .then(res => {
+                                console.log(res)
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                        })
                     })
                     .catch(err => {
                         console.log(err)
                     })
-                    res.data.forEach(val => {
-                        Axios.delete(`${API_URL}/cart/${val.id}`)
-                        .then(res => {
-                            console.log(res)
-                            this.setState({
-                                finishCart: true
-                            })
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
+                    this.setState({
+                        finishCart: true
                     })
                 })
                 .catch(err => {
@@ -189,7 +178,14 @@ class Cart extends React.Component {
     }
 
     render() { 
-        if(this.state.finishCart){
+        if(this.state.loading){
+            return (
+                <div className='d-flex justify-content-center'>
+                    <Loader type="ThreeDots" color="#somecolor" height={80} width={80} />
+                    {/* LOADING */}
+                </div>
+            )
+        }else if(this.state.finishCart){
             return(
                 <Redirect to='/transaction' />
             )
@@ -197,35 +193,36 @@ class Cart extends React.Component {
             return(
                 <h1 style={{'textAlign' : 'center'}}>Your cart is empty.</h1>
             )
+        }else{
+            return ( 
+                <div>
+                    <h1 style={{'textAlign' : 'center'}}>Cart</h1>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>Name</th>
+                                <th width='20%' >Image</th>
+                                <th>Size</th>
+                                <th>Quantity</th>
+                                <th width='30%' >Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.renderCart()}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colSpan='5' style={{textAlign: 'right'}}>Grand Total</td>
+                                <td>Rp. {this.state.grandTotal.toLocaleString('id-ID')}</td>
+                                <td><Button color='success' onClick={this.toPayment}>Payment</Button></td>
+                            </tr>
+                        </tfoot>
+                    </Table>
+                </div>
+            );
         }
-        return ( 
-            <div>
-                <h1 style={{'textAlign' : 'center'}}>Cart</h1>
-                <Table>
-                    <thead>
-                        <tr>
-                            <th>id</th>
-                            <th>Name</th>
-                            <th width='20%' >Image</th>
-                            <th>Size</th>
-                            <th>Quantity</th>
-                            <th width='30%' >Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.renderCart()}
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colSpan='5' style={{textAlign: 'right'}}>Grand Totale</td>
-                            <td>Rp. {this.state.grandTotal.toLocaleString('id-ID')}</td>
-                            <td><Button color='success' onClick={this.toPayment}>Payment</Button></td>
-                        </tr>
-                    </tfoot>
-                </Table>
-            </div>
-        );
     }
 }
  

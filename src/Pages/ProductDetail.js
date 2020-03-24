@@ -21,8 +21,17 @@ class ProductDetail extends Component {
             { value: '45', label: '45' },
             { value: '46', label: '46' },
         ],
+        quantity: [
+            { value: '1', label: '1' },
+            { value: '2', label: '2' },
+            { value: '3', label: '3' },
+            { value: '4', label: '4' },
+            { value: '5', label: '5' }
+        ],
         selectedOption: null,
-        confirmLogin: true
+        selectedQuantity: null,
+        confirmLogin: true,
+        finishAdd: false
     }
     
     componentDidMount(){
@@ -34,9 +43,12 @@ class ProductDetail extends Component {
         this.props.fetchProductId(id)
     }
 
-    handleChange = (selectedOption) => {
+    handleChangeOption = (selectedOption) => {
         this.setState({ selectedOption: Number(selectedOption.value)});
-        console.log(this.state.selectedOption)
+    }
+
+    handleChangeQuantity = (selectedQuantity) => {
+        this.setState({ selectedQuantity: Number(selectedQuantity.value)});
     }
 
     addToCart = () => {
@@ -45,28 +57,21 @@ class ProductDetail extends Component {
                 confirmLogin : false
             })
         }else{
-            if(this.state.selectedOption){
-                const {image, name, brand, category, price, id} = this.props.data
+            if(this.state.selectedOption && this.state.selectedQuantity){
+                const {image, name, price, id} = this.props.data
                 let obj = {
                     userId: this.props.userId,
                     idProduct: id,
                     name,
-                    brand,
-                    category,
                     price,
                     image,
                     size: this.state.selectedOption,
-                    count: 1
+                    quantity: this.state.selectedQuantity
                 }
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Added To Cart',
-                    text: `${obj.name} - size: ${obj.size}`,   
-                })
                 Axios.get(`${API_URL}/cart?userId=${obj.userId}&idProduct=${obj.idProduct}&size=${obj.size}`)
                 .then(res => {
                     if(res.data.length > 0){
-                        Axios.patch(`${API_URL}/cart/${res.data[0].id}`, {count: res.data[0].count + 1})
+                        Axios.patch(`${API_URL}/cart/${res.data[0].id}`, {quantity: res.data[0].quantity + obj.quantity})
                         .then(res => {
                             console.log(res.data)
                         })
@@ -86,11 +91,29 @@ class ProductDetail extends Component {
                 .catch(err => {
                     console.log(err)
                 })
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Added To Cart',
+                    html: `<p>${obj.name}</p>
+                    <p>Size: ${obj.size}</p> 
+                    <p>Quantity: ${obj.quantity}</p>
+                    <p><strong>Continue to Cart?</strong></p>`,  
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, take me to Cart.'
+                }).then((result) => {
+                    if (result.value) {
+                    this.setState({
+                        finishAdd: true
+                    })
+                    }
+                })
             }else{
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'Size has not been selected',
-                    text: 'Please select size before adding to cart.'
+                    icon: 'error',
+                    title: 'Size or Quantity has not been selected',
+                    text: 'Please select size and quantity before adding to cart.'
                 })
             }
         }
@@ -108,7 +131,6 @@ class ProductDetail extends Component {
                     {/* LOADING */}
                 </div>
             )
-
         }else if(this.props.error){
             return(
                 <div className='d-flex justify-content-center'>
@@ -116,6 +138,10 @@ class ProductDetail extends Component {
                 </div>
             )
 
+        }else if(this.state.finishAdd){
+            return(
+                <Redirect to={'/cart'} />
+            )
         }else{
             const {image, name, brand, category, price} = this.props.data
             return (
@@ -140,10 +166,20 @@ class ProductDetail extends Component {
                             <strong>Price: Rp. {price && price.toLocaleString()}</strong>
                         </div>
                         <div style={{width:'40%', marginTop: '20px', marginBottom: '10px'}}>
-                            <Select 
-                                options={this.state.options} 
-                                onChange={this.handleChange}
-                            />
+                            <p style={{marginBottom: '0'}}>Size</p>
+                            <div style={{marginBottom: '20px'}}>
+                                <Select
+                                    options={this.state.options} 
+                                    onChange={this.handleChangeOption}
+                                />
+                            </div>
+                            <p style={{marginBottom: '0'}}>Quantity</p>
+                            <div>
+                                <Select 
+                                    options={this.state.quantity} 
+                                    onChange={this.handleChangeQuantity}
+                                />
+                            </div>
                         </div>
                         <div className='d-flex flex-row-reverse'>
                             <Button onClick={this.addToCart}>Add To Cart</Button>

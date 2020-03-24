@@ -92,6 +92,11 @@ const Example = (props) => {
                       :
                       null
                     }
+                    <Link to='/profile'>
+                      <DropdownItem>
+                        Profile
+                      </DropdownItem>
+                    </Link>
                     <Link to='/cart'>
                       <DropdownItem>
                         Cart

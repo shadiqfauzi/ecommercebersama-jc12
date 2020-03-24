@@ -68,7 +68,6 @@ class LatihanAxios extends Component {
         axios.patch(
             `http://localhost:2000/latihan/${this.state.idData}`, obj)
         .then((res) => {
-            console.log(res, 'ini patch')
             this.componentDidMount()
         })
         .catch((err) => {
@@ -90,7 +89,6 @@ class LatihanAxios extends Component {
     onBtnDeleteData = () => {
         axios.delete(`http://localhost:2000/latihan/${this.state.idData}`)
         .then((res) => {
-            console.log(res, 'ini delete')
             this.componentDidMount()
         })
         .catch((err) => {
@@ -119,7 +117,6 @@ class LatihanAxios extends Component {
     }
 
     renderTable() {
-        console.log(this.state)
         let td = this.state.data.map(val => {
             return (
                     <tr key={val.id}>

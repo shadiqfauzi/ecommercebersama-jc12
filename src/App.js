@@ -14,6 +14,7 @@ import ReviewPage from './Pages/ReviewPage';
 import Review from './Pages/Review'
 import ProductDetail from './Pages/ProductDetail'
 import ManageProduct from './Pages/ManageProduct'
+import Profile from './Pages/Profile'
 // import { API_URL } from './Support/API_URL'
 // import axios from 'axios'
 import { connect } from 'react-redux';
@@ -64,6 +65,7 @@ class App extends Component{
         <Route path='/reviewv2' component={Review} />
         <Route path='/product-detail' component={ProductDetail} />
         <Route path='/manage-product' component={ManageProduct} />
+        <Route path='/profile' component={Profile} />
       </Switch>
     )
     return(

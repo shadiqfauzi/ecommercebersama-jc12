@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import ProductCard from '../Components/ProductCard'
+import Select from 'react-select'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { fetchProduct } from '../Redux/Action'
 import Loader from 'react-loader-spinner'
 
 class ProductPage extends Component {
-    state = {  }
+    state = {
+        options: [
+            { value: 'men', label: 'Men' },
+            { value: 'women', label: 'Women' },
+            { value: 'kids', label: 'Kids' }
+        ]
+    }
     
     componentDidMount(){
         this.props.fetchProduct()
@@ -48,7 +55,10 @@ class ProductPage extends Component {
             return (
                 <div className='d-flex'>
                     <div className='col-2'>
-                        <p>hello</p>
+                        <Select
+                            options={this.state.options} 
+                            // onChange={this.handleChangeOption}
+                        />
                     </div>
                     <div className='col-10'>
                         <div className='row'>

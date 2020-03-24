@@ -5,6 +5,7 @@ import { API_URL } from '../Support/API_URL'
 import Swal from 'sweetalert2'
 import { connect } from 'react-redux'
 import { fetchProduct, addProduct, editProduct } from '../Redux/Action'
+import { Redirect } from 'react-router-dom'
 
 class ManageProduct extends Component {
     state = {
@@ -18,10 +19,22 @@ class ManageProduct extends Component {
         editbrand: '',
         editprice: '',
         editcategory: '',
-        editimage: ''
+        editimage: '',
+        role: 'admin'
     }
 
     componentDidMount = () => {
+        let token = localStorage.getItem('token')
+        let user = JSON.parse(token)
+        if(token){
+            this.setState({
+                role: user.role
+            })
+        }else{
+            this.setState({
+                role: null
+            })
+        }
         this.props.fetchProduct()
     }
 
@@ -169,6 +182,9 @@ class ManageProduct extends Component {
     }
 
     render() { 
+        if(this.state.role !== 'admin' || this.state.role === null){
+            return (<Redirect to={'/'}/>)
+        }
         return (
             <div  style={{fontWeight: '600'}}>
                 <Table>

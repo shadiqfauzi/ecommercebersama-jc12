@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { API_URL } from '../../Support/API_URL'
+import Swal from 'sweetalert2'
 
 // export const Login = (data) => {
 //     return{
@@ -10,20 +11,25 @@ import { API_URL } from '../../Support/API_URL'
 
 export const Login = (username, password) => {
     return(dispatch) => {
-        Axios.get(`${API_URL}/users?username=${username}&password=${password}`)
+        const encode = encodeURIComponent(password)
+        Axios.get(`${API_URL}/users?username=${username}&password=${encode}`)
         .then(res => {
             if(res.data[0]){
                 localStorage.setItem('token', JSON.stringify({
                     username: res.data[0].username, 
                     password: res.data[0].password,
-                    id: res.data[0].id
+                    id: res.data[0].id,
+                    role: res.data[0].role
                 }))
                 dispatch({
                     type: 'LOGIN',
                     payload : res.data[0]
                 })
             }else{
-                window.alert('password salah!!!')
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Wrong username / password.'
+                })
             }
         })
         .catch(err => {
@@ -38,7 +44,8 @@ export const keepLogin = (token) => {
     return(dispatch) => {
         token = JSON.parse(token)
         let { username, password } = token
-        Axios.get(`${API_URL}/users?username=${username}&password=${password}`)
+        const encode = encodeURIComponent(password)
+        Axios.get(`${API_URL}/users?username=${username}&password=${encode}`)
         .then(res => {
             dispatch({
                 type: 'LOGIN',
