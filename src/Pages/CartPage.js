@@ -21,6 +21,12 @@ class Cart extends React.Component {
         this.fetchData(userId.id)
     }
 
+    // componentDidUpdate(){
+    //     if(this.state.loading && this.props.userId){
+    //         this.fetchData(this.props.userId)
+    //     }
+    // }
+
     componentWillUnmount() {
         this.setState({
             grandTotal: 0
